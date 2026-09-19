@@ -1,13 +1,17 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { Boxes } from "lucide-react";
-import { AdminLayout } from "@/components/layout/admin-layout";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api/client";
 
 type Model = { id?: string; code?: string; name?: string; provider?: string; status?: string; active?: boolean; input_price?: number; output_price?: number };
 export default function CatalogPage() {
   const query = useQuery({ queryKey: ["admin-catalog"], queryFn: () => api.get<Model[]>("/v1/admin/models") });
-  return <AdminLayout><Card className="overflow-hidden"><div className="flex items-center gap-3 border-b p-5"><Boxes className="h-5 w-5 text-primary" /><div><h2 className="font-semibold">Model catalog</h2><p className="text-sm text-muted-foreground">Availability and provider inventory.</p></div></div>{query.isLoading ? <div className="p-6 text-sm text-muted-foreground">Loading catalog…</div> : <div className="divide-y">{(query.data ?? []).map((model, i) => <div key={model.id ?? model.code ?? i} className="flex items-center justify-between gap-4 p-4"><div><p className="font-medium">{model.name ?? model.code ?? "Unnamed model"}</p><p className="text-sm text-muted-foreground">{model.provider ?? "Unknown provider"}</p></div><Badge variant="secondary">{model.status ?? (model.active === false ? "inactive" : "active")}</Badge></div>)}</div>}</Card></AdminLayout>;
+  return <div className="space-y-5">
+    <div><h1 className="text-2xl font-semibold tracking-tight">Model catalog</h1><p className="mt-1 text-sm text-muted-foreground">Availability, providers, and model pricing.</p></div>
+    <Card><CardHeader className="border-b"><CardTitle>Available models</CardTitle><CardDescription>Models configured for the Ngamia gateway</CardDescription></CardHeader>
+      {query.isLoading ? <CardContent className="space-y-3 py-5">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}</CardContent> : query.isError ? <CardContent className="py-6 text-sm text-destructive">The model catalog could not be loaded.</CardContent> : (query.data ?? []).length ? <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b text-left text-xs text-muted-foreground"><th className="px-5 py-3 font-medium">Model</th><th className="px-5 py-3 font-medium">Provider</th><th className="px-5 py-3 font-medium">Input price</th><th className="px-5 py-3 font-medium">Output price</th><th className="px-5 py-3 font-medium">Status</th></tr></thead><tbody>{(query.data ?? []).map((model, i) => <tr key={model.id ?? model.code ?? i} className="border-b last:border-0 transition-colors hover:bg-muted/40"><td className="px-5 py-3"><p className="font-medium">{model.name ?? model.code ?? "Unnamed model"}</p>{model.code && model.name && <p className="font-mono text-xs text-muted-foreground">{model.code}</p>}</td><td className="px-5 py-3 text-muted-foreground">{model.provider ?? "Unknown provider"}</td><td className="px-5 py-3 tabular-nums">{model.input_price?.toLocaleString() ?? "—"}</td><td className="px-5 py-3 tabular-nums">{model.output_price?.toLocaleString() ?? "—"}</td><td className="px-5 py-3"><Badge variant={model.active === false || model.status === "inactive" ? "outline" : "secondary"} className="capitalize">{model.status ?? (model.active === false ? "inactive" : "active")}</Badge></td></tr>)}</tbody></table></div> : <CardContent><div className="empty-state"><p className="empty-state-title">No models available</p><p className="empty-state-description">Configured model inventory will appear here.</p></div></CardContent>}
+    </Card>
+  </div>;
 }

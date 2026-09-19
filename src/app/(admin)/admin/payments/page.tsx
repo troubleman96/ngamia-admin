@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { CreditCard } from "lucide-react";
 
-import { AdminLayout } from "@/components/layout/admin-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminPayments, type AdminPayment } from "@/lib/api/hooks/admin";
 import { formatCredits, formatRelativeTime } from "@/lib/utils";
@@ -26,10 +25,9 @@ export default function AdminPaymentsPage() {
   });
 
   return (
-    <AdminLayout>
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold tracking-tight">Payments</h2>
+    <div className="space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div><h1 className="text-2xl font-semibold tracking-tight">Payments</h1><p className="mt-1 text-sm text-muted-foreground">Review customer deposits and settlement status.</p></div>
           <div className="flex gap-1.5">
             {[undefined, "pending", "completed", "failed"].map((s) => (
               <Button
@@ -45,7 +43,8 @@ export default function AdminPaymentsPage() {
           </div>
         </div>
 
-        <Card>
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b"><CardTitle>Payment history</CardTitle><CardDescription>Recent transactions across Ngamia</CardDescription></CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
               <div className="space-y-3 p-4">
@@ -58,30 +57,26 @@ export default function AdminPaymentsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
-                      <th className="px-4 py-3 font-medium">Ref</th>
-                      <th className="px-4 py-3 font-medium">Amount</th>
-                      <th className="hidden px-4 py-3 font-medium sm:table-cell">Date</th>
-                      <th className="px-4 py-3 font-medium">Status</th>
+                      <th className="px-5 py-3 font-medium">Reference</th>
+                      <th className="px-5 py-3 font-medium">Customer / amount</th>
+                      <th className="hidden px-5 py-3 font-medium sm:table-cell">Date</th>
+                      <th className="px-5 py-3 font-medium">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {payments.map((p: AdminPayment) => (
-                      <tr key={p.id} className="border-b last:border-0 hover:bg-accent/5">
-                        <td className="px-4 py-3 font-mono text-xs">
+                      <tr key={p.id} className="border-b last:border-0 transition-colors hover:bg-muted/40">
+                        <td className="px-5 py-3 font-mono text-xs">
                           {p.provider_reference ?? p.id}
                         </td>
-<td className="px-4 py-3 font-medium">
-          <div>{formatCredits(p.amount_tzs)} TZS</div>
-          {p.user && (
-            <div className="text-xs font-normal text-muted-foreground">
-              {p.user.full_name}
-            </div>
-          )}
-        </td>
-                        <td className="hidden px-4 py-3 text-xs text-muted-foreground sm:table-cell">
+                        <td className="px-5 py-3 font-medium">
+                          <div>{formatCredits(p.amount_tzs)} TZS</div>
+                          {p.user && <div className="text-xs font-normal text-muted-foreground">{p.user.full_name}</div>}
+                        </td>
+                        <td className="hidden px-5 py-3 text-xs text-muted-foreground sm:table-cell">
                           {formatRelativeTime(p.created_at)}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-5 py-3">
                           <Badge
                             variant={
                               STATUS_VARIANTS[p.status] ??
@@ -111,6 +106,5 @@ export default function AdminPaymentsPage() {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
   );
 }

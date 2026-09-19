@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,9 +62,9 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <AdminLayout>
-      <div className="space-y-4">
-        <h2 className="text-base font-semibold tracking-tight">Platform settings</h2>
+
+      <div className="space-y-5">
+        <div><h1 className="text-2xl font-semibold tracking-tight">Platform settings</h1><p className="mt-1 text-sm text-muted-foreground">Manage system values used across Ngamia services.</p></div>
 
         {isLoading ? (
           <div className="space-y-3">
@@ -115,6 +114,6 @@ export default function AdminSettingsPage() {
           </div>
         )}
       </div>
-    </AdminLayout>
+
   );
 }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ExternalLink, Search, Users } from "lucide-react";
 import Link from "next/link";
 
-import { AdminLayout } from "@/components/layout/admin-layout";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,10 +34,10 @@ export default function AdminUsersPage() {
   });
 
   return (
-    <AdminLayout>
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold tracking-tight">Users</h2>
+
+      <div className="space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div><h1 className="text-2xl font-semibold tracking-tight">Users</h1><p className="mt-1 text-sm text-muted-foreground">Manage customer accounts and access.</p></div>
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -50,7 +49,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        <Card>
+        <Card className="overflow-hidden">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="space-y-3 p-4">
@@ -131,6 +130,6 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+
   );
 }

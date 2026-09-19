@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "@/lib/auth/auth-context";
+import { AdminLayout } from "@/components/layout/admin-layout";
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -24,11 +25,7 @@ function AdminGuard({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-background">
-      <main className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl pb-6">{children}</div>
-      </main>
-    </div>
+    <AdminLayout>{children}</AdminLayout>
   );
 }
 

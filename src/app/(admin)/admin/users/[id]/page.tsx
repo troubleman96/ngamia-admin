@@ -4,7 +4,6 @@ import { use } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -29,18 +28,16 @@ export default function AdminUserDetailPage({
 
   if (isLoading) {
     return (
-      <AdminLayout>
+      <div className="space-y-4">
         <Skeleton className="h-8 w-40" />
         <Skeleton className="mt-4 h-40 w-full" />
-      </AdminLayout>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <AdminLayout>
-        <div className="empty-state">User not found.</div>
-      </AdminLayout>
+      <div><div className="empty-state">User not found.</div></div>
     );
   }
 
@@ -51,8 +48,7 @@ export default function AdminUserDetailPage({
     );
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
+      <div><div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" render={<Link href="/admin/users" />}>
@@ -217,7 +213,6 @@ export default function AdminUserDetailPage({
             </CardContent>
           </Card>
         )}
-      </div>
-    </AdminLayout>
+      </div></div>
   );
 }
