@@ -16,10 +16,10 @@ export default function SecurityPage() {
   const qc = useQueryClient();
   const [setup, setSetup] = useState<Setup | null>(null);
   const [code, setCode] = useState("");
-  const status = useQuery({ queryKey: ["admin-totp-status"], queryFn: () => api.get<Status>("/v1/admin/mfa/totp/status") });
-  const begin = useMutation({ mutationFn: () => api.post<Setup>("/v1/admin/mfa/totp/setup"), onSuccess: setSetup });
-  const enable = useMutation({ mutationFn: () => api.post("/v1/admin/mfa/totp/confirm", { code }), onSuccess: () => { setSetup(null); setCode(""); qc.invalidateQueries({ queryKey: ["admin-totp-status"] }); } });
-  const disable = useMutation({ mutationFn: () => api.delete("/v1/admin/mfa/totp/"), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-totp-status"] }) });
+  const status = useQuery({ queryKey: ["admin-totp-status"], queryFn: () => api.get<Status>("/v1/admin/auth/mfa/status") });
+  const begin = useMutation({ mutationFn: () => api.post<Setup>("/v1/admin/auth/mfa/setup"), onSuccess: setSetup });
+  const enable = useMutation({ mutationFn: () => api.post("/v1/admin/auth/mfa/enable", { code }), onSuccess: () => { setSetup(null); setCode(""); qc.invalidateQueries({ queryKey: ["admin-totp-status"] }); } });
+  const disable = useMutation({ mutationFn: () => api.post("/v1/admin/auth/mfa/disable"), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-totp-status"] }) });
 
   return (
     <div className="space-y-5">
@@ -32,7 +32,8 @@ export default function SecurityPage() {
           <ShieldCheck className="mt-1 h-6 w-6 text-primary" />
           <div className="flex-1">
             <h2 className="font-semibold">Authenticator app</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Status: {status.isLoading ? "Loading…" : status.data?.enabled ? "Enabled" : "Not enabled"}</p>
+            <p className="mt-1 text-sm text-muted-foreground">Status: {status.isLoading ? "Loading…" : status.isError ? "Unavailable" : status.data?.enabled ? "Enabled" : "Not enabled"}</p>
+            {(begin.isError || enable.isError || disable.isError || status.isError) && <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{(begin.error ?? enable.error ?? disable.error ?? status.error) instanceof Error ? (begin.error ?? enable.error ?? disable.error ?? status.error)?.message : "MFA request failed. Please try again."}</p>}
             {status.data?.enabled ? (
               <Button type="button" variant="destructive" className="mt-5" onClick={() => disable.mutate()} disabled={disable.isPending}>Disable MFA</Button>
             ) : setup ? (
