@@ -33,18 +33,18 @@ export default function AdminIndex() {
         <Badge variant="outline" className="gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Admin console</Badge>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {cards.map((item) => {
           const Icon = item.icon;
           const metric = value(overview.data, ...item.key);
           return <Link href={item.href} key={item.label} className="group">
-            <Card className="h-full bg-gradient-to-b from-primary/[0.035] to-card shadow-xs transition-shadow group-hover:shadow-md">
-              <CardHeader>
-                <CardDescription>{item.label}</CardDescription>
-                <CardTitle className="text-2xl font-semibold tabular-nums">{overview.isLoading ? <Skeleton className="h-8 w-24" /> : typeof metric === "number" ? metric.toLocaleString() : metric}</CardTitle>
-                <CardAction><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted"><Icon className="h-4 w-4 text-muted-foreground" /></span></CardAction>
+              <Card className="h-full bg-gradient-to-b from-primary/[0.035] to-card shadow-xs transition-shadow group-hover:shadow-md">
+              <CardHeader className="p-3 sm:p-6">
+                <CardDescription className="text-[11px] leading-tight sm:text-sm">{item.label}</CardDescription>
+                <CardTitle className="text-xl font-semibold tabular-nums sm:text-2xl">{overview.isLoading ? <Skeleton className="h-7 w-16 sm:h-8 sm:w-24" /> : typeof metric === "number" ? metric.toLocaleString() : metric}</CardTitle>
+                <CardAction><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted sm:h-8 sm:w-8"><Icon className="h-3.5 w-3.5 text-muted-foreground sm:h-4 sm:w-4" /></span></CardAction>
               </CardHeader>
-              <CardFooter className="justify-between text-xs text-muted-foreground"><span>{item.hint}</span><ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></CardFooter>
+              <CardFooter className="justify-between p-3 pt-0 text-[10px] text-muted-foreground sm:p-6 sm:pt-0 sm:text-xs"><span className="truncate">{item.hint}</span><ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></CardFooter>
             </Card>
           </Link>;
         })}
