@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { CreditCard } from "lucide-react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { CreditCard, Search } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminPayments, type AdminPayment } from "@/lib/api/hooks/admin";
 import { formatCredits, formatRelativeTime } from "@/lib/utils";
@@ -19,10 +21,12 @@ const STATUS_VARIANTS: Record<string, "secondary" | "outline" | "destructive"> =
 
 export default function AdminPaymentsPage() {
   const [status, setStatus] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState("");
   const { data: payments, isLoading } = useAdminPayments({
     limit: 100,
     status,
   });
+  const filtered = useMemo(() => (payments ?? []).filter((p) => `${p.provider_reference ?? p.id} ${p.user?.full_name ?? ""} ${p.user?.email ?? ""}`.toLowerCase().includes(search.toLowerCase())), [payments, search]);
 
   return (
     <div className="space-y-5">
@@ -44,7 +48,7 @@ export default function AdminPaymentsPage() {
         </div>
 
         <Card className="overflow-hidden">
-          <CardHeader className="border-b"><CardTitle>Payment history</CardTitle><CardDescription>Recent transactions across Ngamia</CardDescription></CardHeader>
+          <CardHeader className="border-b"><CardTitle>Payment history</CardTitle><CardDescription>Recent transactions across Ngamia</CardDescription><div className="relative mt-3 max-w-sm"><Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search reference, name, or email" className="pl-9" /></div></CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
               <div className="space-y-3 p-4">
@@ -52,7 +56,7 @@ export default function AdminPaymentsPage() {
                   <Skeleton key={i} className="h-10 w-full" />
                 ))}
               </div>
-            ) : payments && payments.length > 0 ? (
+            ) : filtered.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -64,14 +68,14 @@ export default function AdminPaymentsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {payments.map((p: AdminPayment) => (
+                    {filtered.map((p: AdminPayment) => (
                       <tr key={p.id} className="border-b last:border-0 transition-colors hover:bg-muted/40">
                         <td className="px-5 py-3 font-mono text-xs">
-                          {p.provider_reference ?? p.id}
+                          <Link className="hover:text-primary hover:underline" href={`/admin/payments/${p.id}`}>{p.provider_reference ?? p.id}</Link>
                         </td>
                         <td className="px-5 py-3 font-medium">
                           <div>{formatCredits(p.amount_tzs)} TZS</div>
-                          {p.user && <div className="text-xs font-normal text-muted-foreground">{p.user.full_name}</div>}
+                          {p.user && <div className="text-xs font-normal text-muted-foreground">{p.user.full_name}{p.user.email ? ` · ${p.user.email}` : ""}</div>}
                         </td>
                         <td className="hidden px-5 py-3 text-xs text-muted-foreground sm:table-cell">
                           {formatRelativeTime(p.created_at)}

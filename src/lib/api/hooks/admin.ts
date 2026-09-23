@@ -102,6 +102,7 @@ export type AdminPayment = {
     email?: string;
   };
 };
+export type AdminPaymentDetail = AdminPayment & { user_id?: string; user_name?: string; user_email?: string; user_phone?: string; provider?: string; credits_granted?: number; completed_at?: string };
 
 export function useAdminPayments(options?: {
   limit?: number;
