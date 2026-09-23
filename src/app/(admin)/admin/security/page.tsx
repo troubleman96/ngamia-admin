@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ShieldCheck } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api/client";
 
 type Status = { enabled?: boolean };
-type Setup = { secret?: string; uri?: string };
+type Setup = { secret?: string; uri?: string; otpauth_url?: string; qr_payload?: string };
 
 export default function SecurityPage() {
   const qc = useQueryClient();
@@ -36,8 +37,9 @@ export default function SecurityPage() {
               <Button type="button" variant="destructive" className="mt-5" onClick={() => disable.mutate()} disabled={disable.isPending}>Disable MFA</Button>
             ) : setup ? (
               <div className="mt-5 space-y-4">
-                <p className="text-sm">Scan this URI with your authenticator app, then enter the six-digit code.</p>
-                <code className="block break-all rounded bg-muted p-3 text-xs">{setup.uri ?? setup.secret}</code>
+                <p className="text-sm">Scan this QR code with Google Authenticator, Authy, or 1Password. The account will be labeled <strong>NGAMIA ADMIN</strong>.</p>
+                {(setup.qr_payload ?? setup.otpauth_url ?? setup.uri) && <div className="flex justify-center rounded-lg border bg-white p-5"><QRCodeSVG value={setup.qr_payload ?? setup.otpauth_url ?? setup.uri ?? ""} size={220} includeMargin /></div>}
+                <div><p className="mb-1 text-xs font-medium text-muted-foreground">Manual setup key</p><code className="block break-all rounded bg-muted p-3 text-xs">{setup.secret}</code></div>
                 <div className="flex gap-2">
                   <Input inputMode="numeric" maxLength={6} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} placeholder="000000" />
                   <Button type="button" onClick={() => enable.mutate()} disabled={code.length !== 6 || enable.isPending}>Enable MFA</Button>
