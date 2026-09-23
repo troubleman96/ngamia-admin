@@ -19,7 +19,7 @@ const groups = [
   { label: "Workspace", items: [["/admin", "Overview", LayoutDashboard]] },
   { label: "Analytics", items: [["/admin/analytics/overview", "Overview", BarChart3], ["/admin/analytics/models", "Model usage", TrendingUp], ["/admin/analytics/users", "User usage", UserRound], ["/admin/analytics/profit", "Profit", Wallet]] },
   { label: "Management", items: [["/admin/users", "Users", Users], ["/admin/workspaces", "Workspaces", Building2], ["/admin/payments", "Payments", CreditCard], ["/admin/catalog", "Model catalog", Boxes]] },
-  { label: "System", items: [["/admin/activity", "Activity", Activity], ["/admin/notifications", "Broadcasts", Bell], ["/admin/security", "Security", ShieldCheck], ["/admin/settings", "Settings", Settings2], ["/admin/profile", "Profile", UserRound]] },
+  { label: "System", items: [["/admin/requests", "Requests", Activity], ["/admin/activity", "Activity", Activity], ["/admin/notifications", "Broadcasts", Bell], ["/admin/security", "Security", ShieldCheck], ["/admin/settings", "Settings", Settings2], ["/admin/profile", "Profile", UserRound]] },
 ] as const;
 const pages: { href: string; label: string; Icon: LucideIcon }[] = groups.flatMap((group) =>
   group.items.map(([href, label, Icon]) => ({ href, label, Icon }))
